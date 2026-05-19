@@ -1,0 +1,42 @@
+BEGIN;
+
+INSERT INTO users (id, name, email, password_hash)
+VALUES
+  ('00000000-0000-0000-0000-000000000001', 'Avery Stone', 'avery@projectnest.test', 'phase2-seed-only'),
+  ('00000000-0000-0000-0000-000000000002', 'Maya Chen', 'maya@projectnest.test', 'phase2-seed-only'),
+  ('00000000-0000-0000-0000-000000000003', 'Noah Patel', 'noah@projectnest.test', 'phase2-seed-only')
+ON CONFLICT (email) DO NOTHING;
+
+INSERT INTO workspaces (id, name, slug, owner_id)
+VALUES
+  ('10000000-0000-0000-0000-000000000001', 'Nest Labs', 'nest-labs', '00000000-0000-0000-0000-000000000001'),
+  ('10000000-0000-0000-0000-000000000002', 'Atlas Studio', 'atlas-studio', '00000000-0000-0000-0000-000000000002')
+ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO memberships (user_id, workspace_id, role)
+VALUES
+  ('00000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'owner'),
+  ('00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 'admin'),
+  ('00000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', 'member'),
+  ('00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000002', 'owner'),
+  ('00000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000002', 'member')
+ON CONFLICT (user_id, workspace_id) DO NOTHING;
+
+INSERT INTO projects (id, workspace_id, name, description)
+VALUES
+  ('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'Launch Readiness', 'Phase 2 product board'),
+  ('20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 'Security Review', 'Tenant-isolation hardening'),
+  ('20000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000002', 'Client Portal', 'Atlas delivery workspace')
+ON CONFLICT (workspace_id, name) DO NOTHING;
+
+INSERT INTO tasks (id, workspace_id, project_id, title, description, status, priority, assignee_id)
+VALUES
+  ('30000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'Draft workspace sidebar navigation', 'Create the first pass of workspace switching UI.', 'TODO', 'HIGH', '00000000-0000-0000-0000-000000000001'),
+  ('30000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'Wire Kanban status columns', 'Render board columns from backend status metadata.', 'IN_PROGRESS', 'URGENT', '00000000-0000-0000-0000-000000000002'),
+  ('30000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000002', 'Add task status update endpoint', 'Persist drag-and-drop status changes with workspace checks.', 'DONE', 'MEDIUM', '00000000-0000-0000-0000-000000000003'),
+  ('30000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000002', 'Prepare tenant middleware contract', 'Document where auth and isolation middleware will wrap routes.', 'TODO', 'MEDIUM', NULL),
+  ('30000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000003', 'Map client onboarding board', 'Create initial client portal delivery workflow.', 'TODO', 'HIGH', '00000000-0000-0000-0000-000000000002'),
+  ('30000000-0000-0000-0000-000000000006', '10000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000003', 'Review portal copy tasks', 'Finish task allocation before analytics work.', 'IN_PROGRESS', 'LOW', '00000000-0000-0000-0000-000000000003')
+ON CONFLICT (id) DO NOTHING;
+
+COMMIT;

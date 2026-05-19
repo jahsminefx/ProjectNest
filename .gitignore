@@ -1,5 +1,8 @@
 node_modules/
+dist/
+client/dist/
 .env
+client/.env
 uploads/*
 !uploads/.gitkeep
 server/uploads/*
@@ -7,3 +10,7 @@ server/uploads/*
 npm-debug.log*
 server-check.log
 server-check.err
+api-dev.log
+api-dev.err
+client-dev.log
+client-dev.err

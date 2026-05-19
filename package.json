@@ -5,7 +5,11 @@
   "main": "server/src/app.js",
   "scripts": {
     "dev": "nodemon server/src/app.js",
-    "start": "node server/src/app.js"
+    "start": "node server/src/app.js",
+    "server:dev": "nodemon server/src/app.js",
+    "server:start": "node server/src/app.js",
+    "client:dev": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build"
   },
   "keywords": [
     "project-management",

@@ -16,4 +16,10 @@ Phase 1 initializes the core relational schema for logical multi-tenant isolatio
 psql "$DATABASE_URL" -f database/init.sql
 ```
 
+Optional Phase 2 demo data:
+
+```bash
+psql "$DATABASE_URL" -f database/seed.sql
+```
+
 The Express app reads the database connection from `DATABASE_URL`.
