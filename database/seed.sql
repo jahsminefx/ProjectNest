@@ -2,10 +2,11 @@ BEGIN;
 
 INSERT INTO users (id, name, email, password_hash)
 VALUES
-  ('00000000-0000-0000-0000-000000000001', 'Avery Stone', 'avery@projectnest.test', 'phase2-seed-only'),
-  ('00000000-0000-0000-0000-000000000002', 'Maya Chen', 'maya@projectnest.test', 'phase2-seed-only'),
-  ('00000000-0000-0000-0000-000000000003', 'Noah Patel', 'noah@projectnest.test', 'phase2-seed-only')
-ON CONFLICT (email) DO NOTHING;
+  ('00000000-0000-0000-0000-000000000001', 'Avery Stone', 'avery@projectnest.test', '$2a$12$OllVKkuiO2RONCUzvtHbwe7pPQ6wSDJl1rJYTZ7XhxY4iA2rBQYOG'),
+  ('00000000-0000-0000-0000-000000000002', 'Maya Chen', 'maya@projectnest.test', '$2a$12$OllVKkuiO2RONCUzvtHbwe7pPQ6wSDJl1rJYTZ7XhxY4iA2rBQYOG'),
+  ('00000000-0000-0000-0000-000000000003', 'Noah Patel', 'noah@projectnest.test', '$2a$12$OllVKkuiO2RONCUzvtHbwe7pPQ6wSDJl1rJYTZ7XhxY4iA2rBQYOG')
+ON CONFLICT (email) DO UPDATE
+SET password_hash = EXCLUDED.password_hash;
 
 INSERT INTO workspaces (id, name, slug, owner_id)
 VALUES

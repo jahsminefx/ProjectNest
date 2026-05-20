@@ -7,6 +7,8 @@ const authRoutes = require('./routes/auth.routes');
 const workspaceRoutes = require('./routes/workspace.routes');
 const taskRoutes = require('./routes/task.routes');
 const uploadRoutes = require('./routes/upload.routes');
+const authenticate = require('./middleware/authenticate');
+const requireWorkspaceMember = require('./middleware/requireWorkspaceMember');
 
 dotenv.config();
 
@@ -19,8 +21,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/workspaces', workspaceRoutes);
-app.use('/api/workspaces/:workspaceId/tasks', taskRoutes);
+app.use('/api/workspaces/:workspaceId/uploads', uploadRoutes);
+app.use('/api/workspaces/:workspaceId/tasks', authenticate, requireWorkspaceMember, taskRoutes);
+app.use('/api/workspaces', authenticate, workspaceRoutes);
 app.use('/api/upload', uploadRoutes);
 
 app.use((req, res) => {
@@ -29,7 +32,10 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(err.status || 500).json({
+
+  const status = err.status || (err.name === 'MulterError' ? 400 : 500);
+
+  res.status(status).json({
     error: err.message || 'Internal server error'
   });
 });

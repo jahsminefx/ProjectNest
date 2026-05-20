@@ -71,7 +71,32 @@ async function updateTaskStatus(workspaceId, taskId, status) {
   return result.rows[0] || null;
 }
 
+async function attachFileToTask(workspaceId, taskId, attachmentUrl) {
+  const result = await db.query(
+    `UPDATE tasks
+    SET attachment_url = $3
+    WHERE workspace_id = $1 AND id = $2
+    RETURNING
+      id,
+      workspace_id,
+      project_id,
+      title,
+      description,
+      status,
+      priority,
+      assignee_id,
+      attachment_url,
+      completed_at,
+      created_at,
+      updated_at`,
+    [workspaceId, taskId, attachmentUrl]
+  );
+
+  return result.rows[0] || null;
+}
+
 module.exports = {
+  attachFileToTask,
   listTasksByWorkspace,
   updateTaskStatus
 };

@@ -8,7 +8,7 @@ function groupTasksByStatus(statuses, tasks) {
   }, {});
 }
 
-function KanbanBoard({ onDragEnd, statuses, tasks }) {
+function KanbanBoard({ onDragEnd, onUpload, statuses, tasks, uploadingTaskId }) {
   const columns = groupTasksByStatus(statuses, tasks);
 
   return (
@@ -17,8 +17,10 @@ function KanbanBoard({ onDragEnd, statuses, tasks }) {
         {statuses.map((status) => (
           <KanbanColumn
             key={status.id}
+            onUpload={onUpload}
             status={status}
             tasks={columns[status.id] || []}
+            uploadingTaskId={uploadingTaskId}
           />
         ))}
       </div>

@@ -22,4 +22,6 @@ Optional Phase 2 demo data:
 psql "$DATABASE_URL" -f database/seed.sql
 ```
 
+Seed users use the password `Password123!`.
+
 The Express app reads the database connection from `DATABASE_URL`.

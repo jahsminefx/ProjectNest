@@ -1,0 +1,95 @@
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext.jsx';
+
+function LoginPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login, token } = useAuth();
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  if (token) {
+    return <Navigate to="/workspace/select/board" replace />;
+  }
+
+  const handleChange = (event) => {
+    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setError('');
+
+    try {
+      await login(form);
+      navigate(location.state?.from?.pathname || '/workspace/select/board', { replace: true });
+    } catch (requestError) {
+      setError(requestError.response?.data?.error || 'Could not sign in with those credentials.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <main className="grid min-h-screen place-items-center bg-panel px-4 py-10 text-ink">
+      <section className="w-full max-w-md rounded-md border border-line bg-white p-6 shadow-soft">
+        <div className="mb-6">
+          <p className="text-sm font-semibold uppercase tracking-wide text-accent">ProjectNest</p>
+          <h1 className="mt-2 text-2xl font-semibold">Sign in</h1>
+        </div>
+
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">Email</span>
+            <input
+              className="w-full rounded-md border border-line px-3 py-2 outline-none focus:border-accent focus:ring-2 focus:ring-teal-100"
+              name="email"
+              onChange={handleChange}
+              type="email"
+              value={form.email}
+              required
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">Password</span>
+            <input
+              className="w-full rounded-md border border-line px-3 py-2 outline-none focus:border-accent focus:ring-2 focus:ring-teal-100"
+              name="password"
+              onChange={handleChange}
+              type="password"
+              value={form.password}
+              required
+            />
+          </label>
+
+          {error && (
+            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          <button
+            className="w-full rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+            disabled={submitting}
+            type="submit"
+          >
+            {submitting ? 'Signing in...' : 'Sign in'}
+          </button>
+        </form>
+
+        <p className="mt-5 text-center text-sm text-slate-600">
+          New here?{' '}
+          <Link className="font-semibold text-accent hover:text-teal-800" to="/register">
+            Create an account
+          </Link>
+        </p>
+      </section>
+    </main>
+  );
+}
+
+export default LoginPage;

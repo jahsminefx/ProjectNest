@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
-import { fetchBoardTasks, patchTaskStatus } from '../api/client.js';
+import { fetchBoardTasks, patchTaskStatus, uploadTaskAttachment } from '../api/client.js';
 import KanbanBoard from '../components/KanbanBoard.jsx';
 import MobileWorkspaceSwitcher from '../components/MobileWorkspaceSwitcher.jsx';
 
@@ -52,6 +52,7 @@ function BoardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [savingTaskId, setSavingTaskId] = useState('');
+  const [uploadingTaskId, setUploadingTaskId] = useState('');
 
   const activeTaskCount = useMemo(
     () => tasks.filter((task) => task.status !== 'DONE').length,
@@ -115,6 +116,31 @@ function BoardPage() {
     }
   };
 
+  const handleTaskUpload = async (taskId, file) => {
+    setUploadingTaskId(taskId);
+
+    try {
+      const result = await uploadTaskAttachment(workspaceId, taskId, file);
+
+      if (result.task) {
+        setTasks((currentTasks) => currentTasks.map((task) => (
+          task.id === taskId
+            ? {
+                ...task,
+                ...result.task,
+                assignee_name: task.assignee_name,
+                project_name: task.project_name
+              }
+            : task
+        )));
+      }
+    } catch (requestError) {
+      alert(requestError.response?.data?.error || 'The file could not be uploaded.');
+    } finally {
+      setUploadingTaskId('');
+    }
+  };
+
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-hidden p-4 md:p-6">
       <MobileWorkspaceSwitcher
@@ -161,7 +187,13 @@ function BoardPage() {
       )}
 
       {!loading && !error && (
-        <KanbanBoard onDragEnd={handleDragEnd} statuses={statuses} tasks={tasks} />
+        <KanbanBoard
+          onDragEnd={handleDragEnd}
+          onUpload={handleTaskUpload}
+          statuses={statuses}
+          tasks={tasks}
+          uploadingTaskId={uploadingTaskId}
+        />
       )}
     </div>
   );

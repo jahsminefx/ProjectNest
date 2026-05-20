@@ -1,18 +1,22 @@
 const db = require('../config/db');
 
-async function listWorkspaces() {
+async function listWorkspacesForUser(userId) {
   const result = await db.query(
     `SELECT
       w.id,
       w.name,
       w.slug,
       w.owner_id,
+      m.role,
       COUNT(t.id)::INTEGER AS task_count,
       COUNT(t.id) FILTER (WHERE t.status = 'DONE')::INTEGER AS completed_task_count
     FROM workspaces w
+    INNER JOIN memberships m ON m.workspace_id = w.id
     LEFT JOIN tasks t ON t.workspace_id = w.id
-    GROUP BY w.id
-    ORDER BY w.created_at ASC`
+    WHERE m.user_id = $1
+    GROUP BY w.id, m.role
+    ORDER BY w.created_at ASC`,
+    [userId]
   );
 
   return result.rows;
@@ -37,6 +41,6 @@ async function getWorkspaceById(workspaceId) {
 }
 
 module.exports = {
-  listWorkspaces,
+  listWorkspacesForUser,
   getWorkspaceById
 };
