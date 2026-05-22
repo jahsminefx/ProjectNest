@@ -44,10 +44,30 @@ export async function fetchBoardTasks(workspaceId) {
   return response.data;
 }
 
+export async function fetchWorkspaceAnalytics(workspaceId) {
+  const response = await api.get(`/workspaces/${workspaceId}/analytics`);
+  return response.data.analytics;
+}
+
+export async function fetchWorkspaceMembers(workspaceId) {
+  const response = await api.get(`/workspaces/${workspaceId}/members`);
+  return response.data.members;
+}
+
 export async function patchTaskStatus(workspaceId, taskId, status) {
   const response = await api.patch(`/workspaces/${workspaceId}/tasks/${taskId}/status`, {
     status
   });
+  return response.data.task;
+}
+
+export async function updateWorkspaceMemberRole(workspaceId, userId, role) {
+  const response = await api.patch(`/workspaces/${workspaceId}/members/${userId}`, { role });
+  return response.data.membership;
+}
+
+export async function deleteWorkspaceTask(workspaceId, taskId) {
+  const response = await api.delete(`/workspaces/${workspaceId}/tasks/${taskId}`);
   return response.data.task;
 }
 

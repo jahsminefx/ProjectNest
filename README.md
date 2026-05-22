@@ -31,3 +31,16 @@ The seed users use `Password123!`.
 - `GET /api/workspaces/:workspaceId/uploads/:filename`: authenticated workspace-scoped file download.
 
 Workspace board and task APIs require a valid JWT and verified workspace membership.
+
+## Phase 4 And 5
+
+- `GET /api/workspaces/:workspaceId/analytics`: raw Postgres analytics for velocity, backlog, and allocations.
+- `GET /api/workspaces/:workspaceId/members`: owner-only member management data.
+- `PATCH /api/workspaces/:workspaceId/members/:userId`: owner-only role update.
+- `DELETE /api/workspaces/:workspaceId/tasks/:taskId`: owner-only task deletion.
+
+Run cross-tenant checks after applying seed data and starting the API:
+
+```bash
+npm run security:cross-tenant
+```

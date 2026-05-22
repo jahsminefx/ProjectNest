@@ -1,6 +1,7 @@
 const express = require('express');
 const { TASK_STATUSES } = require('../constants/taskStatuses');
-const { listTasksByWorkspace, updateTaskStatus } = require('../services/task.service');
+const requireWorkspaceOwner = require('../middleware/requireWorkspaceOwner');
+const { deleteTask, listTasksByWorkspace, updateTaskStatus } = require('../services/task.service');
 
 const router = express.Router({ mergeParams: true });
 
@@ -20,6 +21,20 @@ router.patch('/:taskId/status', async (req, res, next) => {
       req.params.taskId,
       req.body.status
     );
+
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found in this workspace' });
+    }
+
+    return res.json({ task });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.delete('/:taskId', requireWorkspaceOwner, async (req, res, next) => {
+  try {
+    const task = await deleteTask(req.params.workspaceId, req.params.taskId);
 
     if (!task) {
       return res.status(404).json({ error: 'Task not found in this workspace' });

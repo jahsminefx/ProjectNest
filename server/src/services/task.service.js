@@ -95,8 +95,20 @@ async function attachFileToTask(workspaceId, taskId, attachmentUrl) {
   return result.rows[0] || null;
 }
 
+async function deleteTask(workspaceId, taskId) {
+  const result = await db.query(
+    `DELETE FROM tasks
+    WHERE workspace_id = $1 AND id = $2
+    RETURNING id, workspace_id, title`,
+    [workspaceId, taskId]
+  );
+
+  return result.rows[0] || null;
+}
+
 module.exports = {
   attachFileToTask,
+  deleteTask,
   listTasksByWorkspace,
   updateTaskStatus
 };

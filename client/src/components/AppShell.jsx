@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { fetchWorkspaces } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -43,6 +43,14 @@ function AppShell() {
     [workspaceId, workspaces]
   );
 
+  const workspaceNav = activeWorkspace ? [
+    { label: 'Board', to: `/workspace/${activeWorkspace.id}/board` },
+    { label: 'Analytics', to: `/workspace/${activeWorkspace.id}/analytics` },
+    ...(activeWorkspace.role === 'owner'
+      ? [{ label: 'Settings', to: `/workspace/${activeWorkspace.id}/settings` }]
+      : [])
+  ] : [];
+
   return (
     <div className="min-h-screen bg-panel text-ink">
       <div className="flex min-h-screen">
@@ -74,6 +82,26 @@ function AppShell() {
                 </button>
               </div>
             </div>
+            {workspaceNav.length > 0 && (
+              <nav className="mt-3 flex flex-wrap gap-2">
+                {workspaceNav.map((item) => (
+                  <NavLink
+                    className={({ isActive }) =>
+                      [
+                        'rounded-md border px-3 py-1.5 text-sm font-semibold transition',
+                        isActive
+                          ? 'border-accent bg-teal-50 text-accent'
+                          : 'border-line text-slate-700 hover:border-accent hover:text-accent'
+                      ].join(' ')
+                    }
+                    key={item.to}
+                    to={item.to}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+              </nav>
+            )}
           </header>
           <Outlet context={{ activeWorkspace, workspaces }} />
         </main>

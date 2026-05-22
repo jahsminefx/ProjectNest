@@ -26,25 +26,56 @@ function WorkspaceSidebar({ activeWorkspaceId, error, loading, workspaces }) {
         )}
 
         <div className="space-y-1">
-          {workspaces.map((workspace) => (
-            <NavLink
-              className={({ isActive }) =>
-                [
-                  'block rounded-md border px-3 py-3 transition',
-                  isActive || workspace.id === activeWorkspaceId
-                    ? 'border-accent bg-teal-50 text-accent'
-                    : 'border-transparent text-slate-700 hover:border-line hover:bg-panel'
-                ].join(' ')
-              }
-              key={workspace.id}
-              to={`/workspace/${workspace.id}/board`}
-            >
-              <span className="block text-sm font-semibold">{workspace.name}</span>
-              <span className="mt-1 block text-xs text-slate-500">
-                {workspace.task_count || 0} tasks
-              </span>
-            </NavLink>
-          ))}
+          {workspaces.map((workspace) => {
+            const active = workspace.id === activeWorkspaceId;
+
+            return (
+              <div
+                className={[
+                  'rounded-md border transition',
+                  active ? 'border-accent bg-teal-50' : 'border-transparent hover:border-line hover:bg-panel'
+                ].join(' ')}
+                key={workspace.id}
+              >
+                <NavLink className="block px-3 py-3" to={`/workspace/${workspace.id}/board`}>
+                  <span className={['block text-sm font-semibold', active ? 'text-accent' : 'text-slate-700'].join(' ')}>
+                    {workspace.name}
+                  </span>
+                  <span className="mt-1 block text-xs text-slate-500">
+                    {workspace.task_count || 0} tasks
+                  </span>
+                </NavLink>
+                {active && (
+                  <div className="border-t border-teal-100 px-2 pb-2">
+                    <NavLink
+                      className={({ isActive }) =>
+                        [
+                          'mt-2 block rounded px-2 py-1.5 text-xs font-semibold',
+                          isActive ? 'bg-white text-accent' : 'text-slate-600 hover:bg-white'
+                        ].join(' ')
+                      }
+                      to={`/workspace/${workspace.id}/analytics`}
+                    >
+                      Analytics
+                    </NavLink>
+                    {workspace.role === 'owner' && (
+                      <NavLink
+                        className={({ isActive }) =>
+                          [
+                            'mt-1 block rounded px-2 py-1.5 text-xs font-semibold',
+                            isActive ? 'bg-white text-accent' : 'text-slate-600 hover:bg-white'
+                          ].join(' ')
+                        }
+                        to={`/workspace/${workspace.id}/settings`}
+                      >
+                        Settings
+                      </NavLink>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </nav>
     </aside>
